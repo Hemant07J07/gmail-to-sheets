@@ -2,6 +2,7 @@
 import base64
 from bs4 import BeautifulSoup
 from datetime import datetime
+import re
 
 def decode_base64(data_str):
     return base64.urlsafe_b64decode(data_str + '==').decode('utf-8', errors='replace')
@@ -53,3 +54,12 @@ def parse_message(gmail_message):
         "date": date_iso,
         "content": content.strip()
     }
+
+def html_to_text(html):
+    # BeautifulSoup to strip tags then collapse whitespace
+    soup = BeautifulSoup(html, "html.parser")
+    text = soup.get_text("\n")
+
+    # Collapse excessive newlines & whitespace
+    text = re.sub(r'\n\s*\n+', '\n\n', text).strip()
+    return text
